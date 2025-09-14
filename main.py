@@ -17,7 +17,7 @@ if not urls_str:
 URLS = [url.strip() for url in urls_str.split(',')]
 
 # 每隔多少秒 ping 一次 (推荐 60-240 秒之间)
-PING_INTERVAL = 60  # 单位：秒
+PING_INTERVAL = 30  # 单位：秒
 
 # ------------------------------------------- #
 
