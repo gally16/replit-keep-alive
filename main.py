@@ -75,29 +75,33 @@ HTML_TEMPLATE = """
 """
 
 # ------------------ 后台 Pinger 线程 ------------------ #
+
 def pinger_thread_func():
     """这个函数在后台无限循环，ping 所有 URL 并更新全局状态字典"""
     while True:
         for url in URLS:
             status_text = ""
+            timestamp = time.strftime('%Y-%m-%d %H:%M:%S UTC') # 先获取时间戳
             try:
                 response = requests.get(url, timeout=15)
                 status_text = f"Status: {response.status_code}"
             except requests.exceptions.RequestException as e:
-                # 简化错误信息
                 status_text = f"Error: {type(e).__name__}"
             
             # 使用锁安全地更新状态
             with status_lock:
                 monitoring_status[url] = {
                     "status": status_text,
-                    "timestamp": time.strftime('%Y-%m-%d %H:%M:%S UTC')
+                    "timestamp": timestamp
                 }
             
-            # 在 ping 每个 URL 之间稍微停顿一下，避免瞬间产生大量请求
+            # 【【【 在这里添加 print 语句 】】】
+            print(f"[{timestamp}] Pinging {url} ... {status_text}")
+            
             time.sleep(1) 
 
         time.sleep(PING_INTERVAL)
+
 
 # ------------------ Flask Web 服务器 ------------------ #
 app = Flask(__name__)
